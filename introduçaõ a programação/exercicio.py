@@ -23,72 +23,57 @@ A pontuação a ser gravada é a quantidade de comida que o Pacman comeu na roda
 9. Listar jogadores e suas pontuações. Exibir no terminal uma lista de todos os jogadores
 que jogaram o jogo com suas respectivas pontuações.
 """
-
 from random import choice
 import turtle
-
 from freegames import floor, vector
+jogador_atual = input("digite o seu nome:")
+jogadores = []
+for i in range(2):
+  nome = input(f"Digite o nome do jogador {i+1}: ")
+  jogadores.append(nome)
+
+jogador_atual = jogadores[0]
+ARQUIVO_PONTOS="pontuacoes.txt"
 
 estado = {'pontuacao': 0}
 caminho = turtle.Turtle(visible=False)
 escritor = turtle.Turtle(visible=False)
-direcao = vector(5, 0)
+direcao = vector(10, 0)
 pacman = vector( 20, -40)
 
 fantasmas = [
-    [vector(-180, 160), vector(5, 0)],
-    [vector(-180, -160), vector(0, 5)],
-    [vector(100, 160), vector(0, -5)],
-    [vector(100, -160), vector(-5, 0)],
-    [vector(100, 160), vector(-5, 0)],
-    [vector(100, 160), vector(-5, 0)],
+    [vector(-180, 160), vector(10, 0)],
+    [vector(-180, -160), vector(0, 10)],
+    [vector(100, 160), vector(0, -10)],
+    [vector(100, -160), vector(-10, 0)],
+    [vector(100, 160), vector(-10 , 0)],
+    [vector(100, 160), vector(-10 , 0)],
 ]
 
 
 # Mapa do jogo (0 = parede, 1 = comida, 2 = vazio)
 tiles = [
-# 1
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-# 2
 0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,0,
-# 3
 0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,1,0,0,
-# 4
 0,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,0,
-# 5
 0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1,0,
-# 6
 0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,0,
-# 7
 0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0,
-# 8
 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-# 9
 0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,
-# 10
 0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,0,
-# 11
 0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,
-# 12
 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-# 13
 0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,
-# 14
 0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,0,
-# 15
 0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,
-# 16
 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-# 17
 0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,
-# 18
 0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,0,
-# 19
 0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,1,0,0,
-# 20
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 ]
-
 def quadrado(x, y):
     """Desenha um quadrado do tabuleiro."""
     caminho.up()
@@ -107,6 +92,9 @@ def indice(ponto):
     y = (180 - floor(ponto.y, 20)) / 20
     return int(x + y * 20)
 
+def salvar_pontuacao(nome, pontos):
+    with open(ARQUIVO_PONTOS, "a") as arquivo:
+        arquivo.write(f"{nome} - {pontos}\n")
 
 def valido(ponto):
     """Verifica se o movimento é permitido."""
@@ -133,7 +121,6 @@ def mundo():
                 caminho.goto(x + 10, y + 10)
                 caminho.dot(2, 'white')
 
-
 def mover():
     """Laço principal do jogo."""
     escritor.undo()
@@ -148,9 +135,16 @@ def mover():
     if tiles[idx] == 1:
         tiles[idx] = 2
         estado['pontuacao'] += 1
+    
+
         # TODO desenhar quadrado vazio no lugar da comida
-
-
+        
+        x=(idx % 20) * 20-200
+        y= 180 - (idx // 20) * 20
+        caminho.color("purple")
+        quadrado(x ,y)
+        caminho.color("blue")
+    
     turtle.up()
     turtle.goto(pacman.x + 10, pacman.y + 10)
     turtle.dot(20, 'yellow')
@@ -160,11 +154,11 @@ def mover():
             ponto.move(curso)
         else:
             opções = [
-                vector(8, 0),
-                vector(-5, 0),
-                vector(0, 5),
-                vector(0, -5),
-                vector(0, 5),
+                vector(10, 0),
+                vector(-10, 0),
+                vector(0, 10),
+                vector(0, -10),
+                vector(0, 10),
             ]
             escolhido = choice(opções)
             curso.x = escolhido.x
@@ -175,19 +169,28 @@ def mover():
         turtle.dot(20, 'red')
 
     turtle.update()
-
-    for ponto, _ in fantasmas:
+for ponto, _ in fantasmas:
         if abs(pacman - ponto) < 20:
             return
 
     turtle.ontimer(mover, 100)
 
+def listar_pontuacoes():
+    print("\n===== PONTUAÇÕES REGISTRADAS =====")
+
+    try:
+        with open("pontuacoes.txt", "r") as arquivo:
+            for linha in arquivo:
+                print(linha.strip())
+    except FileNotFoundError:
+        print("Nenhuma pontuação encontrada.")
 
 def mudar(x, y):
     """Altera a direção do Pacman."""
     if valido(pacman + vector(x, y)):
         direcao.x = x
         direcao.y = y
+salvar_pontuacao(jogador_atual, estado['pontuacao'])
 
 
 # Configuração gráfica
@@ -206,7 +209,9 @@ turtle.onkey(lambda: mudar(5, 0), 'Right')
 turtle.onkey(lambda: mudar(-5, 0), 'Left')
 turtle.onkey(lambda: mudar(0, 5), 'Up')
 turtle.onkey(lambda: mudar(0, -5), 'Down')
-
+listar_pontuacoes()
 mundo()
 mover()
 turtle.mainloop()
+
+
