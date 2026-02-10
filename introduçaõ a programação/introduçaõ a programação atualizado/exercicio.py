@@ -176,6 +176,7 @@ def mover():
 
     for ponto, _ in fantasmas:
         if abs(pacman - ponto) < 20:
+            salvar_pontuacao(jogador_atual, estado['pontuacao']
             return
 
     turtle.ontimer(mover, 100)
