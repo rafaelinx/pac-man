@@ -196,8 +196,6 @@ def mudar(x, y):
     if valido(pacman + vector(x, y)):
         direcao.x = x
         direcao.y = y
-salvar_pontuacao(jogador_atual, estado['pontuacao'])
-
 
 # Configuração gráfica
 turtle.setup(420, 420, 370, 0)
